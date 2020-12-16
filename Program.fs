@@ -9,23 +9,29 @@ let valueInRange value range =
 
 let rangeTypeMatchesValue value (rangeType:RangeType)  =
     rangeType.ranges
+    // .some(range => valueInRange(value, range))
     |> Array.exists (valueInRange value)
 
 let rangeTypeMatchesAll values (rangeType:RangeType)  =
     values
+    // .every(v => rangeTypeMatchesValue(v, rangeType))
     |> Array.forall (fun v -> rangeTypeMatchesValue v rangeType)
 
 let findRangeTypeMatchesAll (ranges: RangeType array) (values: int array)  =
     ranges
+    // .filter(range => rangeTypeMatchesAll(values, range))
     |> Array.filter (rangeTypeMatchesAll values)
 
 let ticketScanningErrorRate (ranges: RangeType array) (ticket: Ticket)  =
     ticket
+    // .filter(v => !ranges.some(range => rangeTypeMatchesValue(v, range)))
     |> Array.filter (fun v -> ranges |> Array.exists (rangeTypeMatchesValue v) |> not)
+    // .reduce((x, y) => x + y)
     |> Array.sum
     
 let isValid (ranges: RangeType array) (ticket: Ticket)  =
     ticket
+    // .every(v => ranges.some(range => rangeTypeMatchesValue(v, range)))
     |> Array.forall (fun v -> ranges |> Array.exists (rangeTypeMatchesValue v))
     
 let ticketsColumns (tickets: Ticket array) =
@@ -50,7 +56,15 @@ let main argv =
     let ranges = readRanges()
     let nearbyTickets = readNearbyTickets()
     let myTicket = readMyTicket()
-    
+
+    // let resultColumns =
+    //   filterUniques(
+    //     ticketsColumns(
+    //       nearbyTickets.filter(ticket => isValid(ranges, ticket))
+    //     ).map(
+    //       (values) => findRangeTypeMatchesAll(ranges, values)
+    //     )
+    //   )
     let resultColumns =
         nearbyTickets
         |> Array.filter (isValid ranges)

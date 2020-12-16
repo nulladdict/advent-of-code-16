@@ -11,6 +11,8 @@ let readRangeString (rangeString: string) =
     let nameAndRanges = rangeString.Split ": "
     let ranges =
         nameAndRanges.[1].Split " or "
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Pipeline_operator
+        // nameAndRanges[1].split(" or ").map(mapToRange)
         |> Array.map mapToRange
     { name = nameAndRanges.[0]; ranges = ranges  }
 
